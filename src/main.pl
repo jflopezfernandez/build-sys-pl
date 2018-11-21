@@ -52,5 +52,7 @@ sub PrintSortedHashtable {
 
 PrintSortedHashtable(%grades);
 
+say "\n" x 10;
+
 say "Sum: " . Sum(%grades);
 say "Avg: " . Avg(%grades);
