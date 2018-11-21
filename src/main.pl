@@ -6,58 +6,51 @@ use strict;
 use warnings;
 
 
-my ($length, $width, $height, $volume) = (0, 0, 0, 0);
+sub Sum {
+    my %table = @_;
 
-sub Volume {
-    my ($length, $width, $height) = @_;
+    my $sum = 0;
 
-    return ($length * $width * $height);
+    for my $entry (keys %table) {
+        $sum += $table{$entry};
+    }
+
+    return $sum;
 }
 
-sub EnterLength {
-    print "Enter length: ";
-    chomp($length = <STDIN>);
+sub Avg {
+    my %table = @_;
+    my $sum = Sum(%table);
+
+    return ($sum / keys %table);
 }
 
-sub EnterWidth {
-    print "Enter width: ";
-    chomp($width = <STDIN>);
+open(GRADES, "<:utf8", "grades.txt") || die "Failed to open grades file: $!\n";
+binmode(STDOUT, ':utf8');
+
+my %grades;
+
+while (my $line = <GRADES>) {
+    $_ = $line;
+
+    my ($name, $score);
+
+    if (($name, $score) = m/([a-zA-Z \.]+)\s(\d{2,3})/) {
+        $grades{$name} = $score;
+    } else {
+        print STDERR "[ERROR]: Failed to parse line " . __LINE__ . "\n";
+    }
 }
 
-sub EnterHeight {
-    print "Enter height: ";
-    chomp($height = <STDIN>);
+sub PrintSortedHashtable {
+    my %table = @_;
+
+    for my $entry (sort keys %table) {
+        say "$entry: $table{$entry}";
+    }
 }
 
-sub PrintLength {
-    say "Length: $length";
-}
+PrintSortedHashtable(%grades);
 
-sub PrintWidth {
-    say "Width: $width";
-}
-
-sub PrintHeight {
-    say "Height: $height";
-}
-
-sub PrintVolume {
-    say "Volume: $volume";
-}
-
-sub PrintDimensions {
-    my ($l, $w, $h) = @_;
-
-    PrintLength();
-    PrintWidth();
-    PrintHeight();
-    PrintVolume();
-}
-
-EnterLength();
-EnterWidth();
-EnterHeight();
-
-$volume = Volume($length, $width, $height);
-
-PrintDimensions();
+say "Sum: " . Sum(%grades);
+say "Avg: " . Avg(%grades);
